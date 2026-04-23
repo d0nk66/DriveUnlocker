@@ -84,6 +84,22 @@ public static class RestartManagerScanner
             throw new ArgumentException("驱动器路径不能为空。", nameof(drivePath));
         }
 
+        string normalizedPath = NormalizeDrivePath(drivePath);
+        return ScanResourcePaths(CollectResources(normalizedPath));
+    }
+
+    public static List<LockingProcess> ScanFile(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentException("文件路径不能为空。", nameof(filePath));
+        }
+
+        return ScanResourcePaths([filePath]);
+    }
+
+    private static List<LockingProcess> ScanResourcePaths(string[] resources)
+    {
         List<LockingProcess> result = [];
         string sessionKey = Guid.NewGuid().ToString("N");
 
@@ -93,9 +109,6 @@ public static class RestartManagerScanner
 
         try
         {
-            string normalizedDrivePath = NormalizeDrivePath(drivePath);
-            string[] resources = CollectResources(normalizedDrivePath);
-
             int registerResult = RmRegisterResources(
                 sessionHandle,
                 (uint)resources.Length,
@@ -104,7 +117,7 @@ public static class RestartManagerScanner
                 null,
                 0,
                 null);
-            EnsureRestartManagerSuccess(registerResult, "无法注册目标驱动器资源");
+            EnsureRestartManagerSuccess(registerResult, "无法注册资源路径");
 
             uint processInfoCount = 0;
             uint rebootReasons = 0;
@@ -152,7 +165,7 @@ public static class RestartManagerScanner
                 }
                 catch (ArgumentException)
                 {
-                    // 进程已退出，按 PRD 要求静默跳过。
+                    // 进程已退出，静默跳过。
                 }
             }
 

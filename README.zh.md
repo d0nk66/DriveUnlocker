@@ -20,11 +20,9 @@ Release提供两种打包方式：
 ## 使用方法
 
 1. 以管理员身份运行（右键 → 以管理员身份运行，或程序会自动提示）。
-2. 在顶部下拉框中选择要弹出的驱动器。
-3. 点击**扫描占用**查找占用进程，或直接点击**弹出驱动器**尝试直接弹出。
-4. 可以对单行点击 **Kill** 终止单个进程，也可以勾选后点击 **Kill 选中项**，或直接点击 **Kill 全部并弹出**一键清除并弹出。
+2. 通过顶部的选项卡切换功能。
 
-## 从源码构建
+## 从源码build
 
 ```
 git clone https://github.com/yourname/DriveUnlocker.git
@@ -36,9 +34,7 @@ dotnet build DriveUnlocker.sln
 
 ## 实现说明
 
-进程扫描使用 [Windows Restart Manager API](https://learn.microsoft.com/zh-cn/windows/win32/rstmgr/restart-manager-portal)（`rstrtmgr.dll`），这是 Windows Installer 在软件更新时检测文件占用的相同机制，准确率高。
-
-驱动器弹出调用 `cfgmgr32.dll` 的 `CM_Request_Device_Eject`，与系统托盘"安全删除硬件"按钮走的是同一套流程，弹出成功后会触发资源管理器的通知。对于有多个分区的移动硬盘，程序会先逐一锁定并卸载所有分区，再发起弹出请求，避免因残留句柄导致弹出失败。
+进程扫描使用 [Windows Restart Manager API](https://learn.microsoft.com/en-us/windows/win32/rstmgr/restart-manager-portal) (`rstrtmgr.dll`) —— 这与 Windows Installer 在软件更新期间检测文件占用的机制相同。 该 API 支持注册任意文件路径或驱动器根目录以检测当前的锁定状态。 对于驱动器，弹出操作通过 `cfgmgr32.dll` 中的 `CM_Request_Device_Eject` 实现，这与系统托盘中“安全删除硬件”的内部调用一致。 对于具有多个分区的驱动器，工具会在请求弹出前锁定并卸载每个卷，以避免因残留的句柄导致失败。
 
 ## 许可证
 
