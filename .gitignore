@@ -1,8 +1,11 @@
 bin/
 obj/
 dist/
+
+
 .vs/
 .claude/
+.trae
 
 *.user
 *.suo
@@ -15,5 +18,11 @@ artifacts/
 publish/
 *.Publish.xml
 
+
+DriveUnlocker.svg
+# AI Coding相关
 AGENTS.md
+CLAUDE.md
 DriveUnlocker_PRD.md
+
+pics/
